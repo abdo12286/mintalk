@@ -1,20 +1,24 @@
+SERVER =  server.c
+CLIENT =  client.c
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-NAME = minitalk
-OBJ = $(SRC:.c=.o)
+NAME_S = server
+NAME_C = client
+OBJ_S = $(SERVER:.c=.o)
+OBJ_C = $(CLIENT:.c=.o)
+all: $(NAME_C) $(NAME_S)
 
-all: $(NAME)
+$(NAME_S): $(OBJ_S)
+	@$(CC) $(CFLAGS) $(OBJ_S) -o $(NAME_S)
 
-$(NAME): $(OBJ) $(OBJ_M)
-	@$(CC) $(CFLAGS) $(OBJ) $(OBJ_M) -o $(NAME)
+$(NAME_C): $(OBJ_C)
+	@$(CC) $(CFLAGS) $(OBJ_C) -o $(NAME_C)
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(OBJ_M) $(OBJ_BNS)
-
+	rm -f $(OBJ_S) $(OBJ_C)
 fclean: clean
-	rm -f $(NAME) $(CHECKER)
-
+	rm -f $(NAME_C) $(NAME_S)
 re: fclean all

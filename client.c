@@ -1,14 +1,33 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/types.h>
+#include "mintalk.h"
 
+int	ft_strlen(char *str)
+{
+	int i;
+
+	i = 0;
+	if (!str)
+		return(0);
+	while (str[i])
+		i++;
+	return (i);
+}
+void	put_err(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return ;
+	write (2, str, ft_strlen(str));
+	exit (1);
+}
 int	ft_atoi(char *str)
 {
 	int		i;
 	int		sign;
 	long	result;
 	sign = 1;
+	i = 0;
 	if (!str)
 		return (0);
 	while (str[i] <= 32)
@@ -30,28 +49,6 @@ int	ft_atoi(char *str)
 	return(result * sign);
 }
 
-int	ft_strlen(char *str)
-{
-	int i;
-
-	i = 0;
-	if (!str)
-		return(0);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-void	put_err(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return ;
-	write (2, str, ft_strlen(str));
-	exit (1);
-}
 void	send_bin(unsigned char av, pid_t num)
 {
 	int	j;
