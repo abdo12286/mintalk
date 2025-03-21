@@ -1,16 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atigzim <atigzim@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/21 17:45:12 by atigzim           #+#    #+#             */
+/*   Updated: 2025/03/21 17:46:44 by atigzim          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mintalk.h"
 
 int	ft_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str)
-		return(0);
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
 }
+
 void	put_err(char *str)
 {
 	int	i;
@@ -18,14 +31,16 @@ void	put_err(char *str)
 	i = 0;
 	if (!str)
 		return ;
-	write (2, str, ft_strlen(str));
-	exit (1);
+	write(2, str, ft_strlen(str));
+	exit(1);
 }
+
 int	ft_atoi(char *str)
 {
 	int		i;
 	int		sign;
 	long	result;
+
 	sign = 1;
 	i = 0;
 	if (!str)
@@ -46,7 +61,7 @@ int	ft_atoi(char *str)
 	}
 	if (str[i])
 		put_err("please just <pid>");
-	return(result * sign);
+	return (result * sign);
 }
 
 void	send_bin(unsigned char av, pid_t num)
@@ -65,22 +80,20 @@ void	send_bin(unsigned char av, pid_t num)
 	}
 }
 
-
 int	main(int ac, char **av)
 {
 	pid_t	num;
-
-	int	i;
+	int		i;
 
 	i = 0;
 	if (ac != 3)
 		put_err("you just need <pid> <Message>\n");
 	num = ft_atoi(av[1]);
-	while(av[2][i])
+	while (av[2][i])
 	{
-		send_bin(av[2][i],num);
+		send_bin(av[2][i], num);
 		i++;
 	}
 	send_bin('\0', num);
-	return 0;
+	return (0);
 }
