@@ -53,16 +53,18 @@ void	send_bin(unsigned char av, pid_t num)
 {
 	int	j;
 
-	j = 8;
-	while(j >= 0)
+	j = 7;
+	while (j >= 0)
 	{
-		if(((av >> j) & 1) == 0)
+		if (((av >> j) & 1) == 0)
 			kill(num, SIGUSR1);
 		else
 			kill(num, SIGUSR2);
+		usleep(400);
 		j--;
 	}
 }
+
 
 int	main(int ac, char **av)
 {
@@ -79,5 +81,6 @@ int	main(int ac, char **av)
 		send_bin(av[2][i],num);
 		i++;
 	}
-	write (1, "alls good\n", ft_strlen("alls good\n"));
+	send_bin('\0', num);
+	return 0;
 }
