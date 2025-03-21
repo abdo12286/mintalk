@@ -6,11 +6,44 @@
 /*   By: atigzim <atigzim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:06 by atigzim           #+#    #+#             */
-/*   Updated: 2025/03/21 17:45:39 by atigzim          ###   ########.fr       */
+/*   Updated: 2025/03/21 22:15:52 by atigzim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mintalk.h"
+
+void	ft_putchar(char c)
+{
+	write(1, &c, 1);
+}
+
+int	ft_putnbr(int n)
+{
+	int	i;
+
+	i = 0;
+	if (n == -2147483648)
+	{
+		 ft_putnbr(n / 10);
+		  ft_putchar('8');
+	}
+	else if (n < 0)
+	{
+		ft_putchar('-');
+		 ft_putnbr(-n);
+	}
+	else if (n > 9)
+	{
+		ft_putnbr(n / 10);
+		ft_putnbr(n % 10);
+	}
+	else if (n <= 9)
+	{
+		 ft_putchar(n + '0');
+	}
+	return (i);
+}
+
 
 void	handle_signal(int sig, siginfo_t *info, void *context)
 {
@@ -41,8 +74,8 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 int	main(void)
 {
 	struct sigaction	sa;
-
-	printf("Server PID: %d\n", getpid());
+	write(1, "Server PID:",11);
+	ft_putnbr(getpid());
 	sa.sa_flags = SA_SIGINFO | SA_RESTART;
 	sa.sa_sigaction = handle_signal;
 	sigemptyset(&sa.sa_mask);

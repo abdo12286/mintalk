@@ -6,7 +6,7 @@
 /*   By: atigzim <atigzim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:15 by atigzim           #+#    #+#             */
-/*   Updated: 2025/03/21 17:45:16 by atigzim          ###   ########.fr       */
+/*   Updated: 2025/03/21 18:10:43 by atigzim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <unistd.h>
+#include <stdio.h>
 
 int		ft_strlen(char *str);
 void	put_err(char *str);
