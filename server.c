@@ -5,83 +5,64 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: atigzim <atigzim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/21 17:45:06 by atigzim           #+#    #+#             */
-/*   Updated: 2025/03/21 22:15:52 by atigzim          ###   ########.fr       */
+/*   Created: 2025/02/08 16:59:49 by hakader           #+#    #+#             */
+/*   Updated: 2025/03/27 11:59:28 by atigzim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mintalk.h"
+#include "minitalk.h"
 
-void	ft_putchar(char c)
-{
-	write(1, &c, 1);
-}
-
-int	ft_putnbr(int n)
+void	reset_int(int *bits)
 {
 	int	i;
 
 	i = 0;
-	if (n == -2147483648)
-	{
-		 ft_putnbr(n / 10);
-		  ft_putchar('8');
-	}
-	else if (n < 0)
-	{
-		ft_putchar('-');
-		 ft_putnbr(-n);
-	}
-	else if (n > 9)
-	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
-	}
-	else if (n <= 9)
-	{
-		 ft_putchar(n + '0');
-	}
-	return (i);
+	while (i < 8)
+		bits[i++] = 0;
 }
 
-
-void	handle_signal(int sig, siginfo_t *info, void *context)
+void	sig_handler(int sig, siginfo_t *info, void *context)
 {
-	static unsigned char	received_char;
-	static int				bit_count;
-	static int				last_pid = -1;
+	static int	bits[8] = {0};
+	static int	i;
+	static int	last_pid;
 
+	int (result), (j);
 	(void)context;
 	if (last_pid != info->si_pid)
 	{
-		received_char = 0;
-		bit_count = 0;
-		last_pid = info->si_pid;
+		(reset_int(bits)), (last_pid = info->si_pid);
+		i = 0;
 	}
 	if (sig == SIGUSR1)
-		received_char <<= 1;
+		bits[i] = 1;
 	else if (sig == SIGUSR2)
-		received_char = (received_char << 1) | 1;
-	bit_count++;
-	if (bit_count == 8)
+		bits[i] = 0;
+	i++;
+	if (i == 8)
 	{
-		write(1, &received_char, 1);
-		received_char = 0;
-		bit_count = 0;
+		result = 0;
+		j = 0;
+		while (j < 8)
+			result = result * 2 + bits[j++];
+		write(1, &result, 1);
+		i = 0;
 	}
 }
 
-int	main(void)
+int	main(int ac, char **av)
 {
-	struct sigaction	sa;
-	write(1, "Server PID:",11);
+	struct sigaction	sig;
+
+	(void)av;
+	if (ac != 1)
+		(write(2, "Just run it\n", 13)), (exit (1));
 	ft_putnbr(getpid());
-	sa.sa_flags = SA_SIGINFO | SA_RESTART;
-	sa.sa_sigaction = handle_signal;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
+	write(1, "\n", 1);
+	sig.sa_flags = SA_SIGINFO;
+	sig.sa_sigaction = sig_handler;
+	sigaction(SIGUSR1, &sig, NULL);
+	sigaction(SIGUSR2, &sig, NULL);
 	while (1)
-		pause();
-	return (0);
+		;
 }

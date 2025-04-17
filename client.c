@@ -5,95 +5,69 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: atigzim <atigzim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/21 17:45:12 by atigzim           #+#    #+#             */
-/*   Updated: 2025/03/21 17:46:44 by atigzim          ###   ########.fr       */
+/*   Created: 2025/02/08 16:37:21 by hakader           #+#    #+#             */
+/*   Updated: 2025/03/29 15:56:29 by atigzim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mintalk.h"
+#include "minitalk.h"
 
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-void	put_err(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return ;
-	write(2, str, ft_strlen(str));
-	exit(1);
-}
-
-int	ft_atoi(char *str)
+void	char_bin(unsigned char c, int bits[8])
 {
 	int		i;
-	int		sign;
-	long	result;
 
-	sign = 1;
-	i = 0;
-	if (!str)
-		return (0);
-	while (str[i] <= 32)
-		i++;
-	if (str[i] == '-' || str[i] == '+')
+	i = 8;
+	while (i--)
 	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
+		bits[i] = c & 1;
+		c >>= 1;
 	}
-	result = 0;
-	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
-	{
-		result = result * 10 + (str[i] - '0');
-		i++;
-	}
-	if (str[i])
-		put_err("please just <pid>");
-	return (result * sign);
 }
 
-void	send_bin(unsigned char av, pid_t num)
+void	send_bit(pid_t pid, int bit)
 {
-	int	j;
+	if (bit == 1)
+		kill(pid, SIGUSR1);
+	else if (bit == 0)
+		kill(pid, SIGUSR2);
+	usleep(150);
+}
 
-	j = 7;
-	while (j >= 0)
+void	send_signals(pid_t pid, char *str)
+{
+	int			i;
+	int			j;
+	int			bits[8];
+
+	i = 0;
+	while (str[i])
 	{
-		if (((av >> j) & 1) == 0)
-			kill(num, SIGUSR1);
-		else
-			kill(num, SIGUSR2);
-		usleep(400);
-		j--;
+		char_bin(str[i], bits);
+		j = 0;
+		while (j < 8)
+		{
+			send_bit(pid, bits[j]);
+			j++;
+		}
+		i++;
 	}
 }
 
 int	main(int ac, char **av)
 {
-	pid_t	num;
-	int		i;
+	pid_t	pid;
 
-	i = 0;
 	if (ac != 3)
-		put_err("you just need <pid> <Message>\n");
-	num = ft_atoi(av[1]);
-	while (av[2][i])
 	{
-		send_bin(av[2][i], num);
-		i++;
+		write(1, "Error: <Valid pid> <Message>\n", 30);
+		exit(1);
 	}
-	send_bin('\0', num);
+	pid = (pid_t)ft_atoi(av[1]);
+	if (pid <= 0)
+	{
+		write(1, "Error: < pid invalid> \n", 24);
+		exit(1);
+	}
+	send_signals(pid, av[2]);
 	return (0);
 }
